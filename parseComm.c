@@ -1,4 +1,5 @@
 #include "parseComm.h"
+#include "structs.h"
 
 #include <string.h>
 #include <stdlib.h>
