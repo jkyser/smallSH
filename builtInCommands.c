@@ -49,18 +49,19 @@ void _cdCommand (struct userCommand *inputStruct) {
         // change to environment HOME var if no path specified
         chdir(getenv("HOME"));
     } else {
-        // check for relative of absolute path name
-        chdir(inputStruct->argArr[0]);
-        
-        /*char *subStr = strstr(inputStruct->argArr[0], getenv("HOME"));
+        // handle the input argument whether it is relative or not
+        // loop through until you have relative path
+        char *savePtr;
+        char *relPath = strtok_r(inputStruct->argArr[0], "/", &savePtr);
+        char *nextDir = strtok_r(NULL, "/", &savePtr);
 
-        if (subStr != NULL) {
-            // this is an absolute path
-            chdir(inputStruct->argArr[0]);
-        } else {
-            // this is a relative path
+        while (nextDir != NULL) {
+            relPath = nextDir;
+            nextDir = strtok_r(NULL, "/", &savePtr);
+        }
 
-        }*/
+        // change directory to relative path
+        chdir(relPath);
     }
 }
 
