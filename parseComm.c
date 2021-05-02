@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <stdio.h>
 
 /*
 * Removes the newline from the user inputted command and returns that string
@@ -19,6 +20,57 @@ void removeNewline(char *userIn) {
 */
 void commPrompt() {
     write(1, ": ", 2);
+}
+
+
+/*
+*   Expands '$$' into the process id
+*/
+char *_expandVar(int i, char *expandStr) {
+    // copy characters on left side of $$
+    char *tempLeftSide = malloc(sizeof(char) * (i+1));
+    strncpy(tempLeftSide, expandStr, i);
+    tempLeftSide[i+1] = '\0';
+
+    //copy characters on right side of $$
+    char *tempRightSide = malloc(sizeof(char) * (strlen(expandStr) - (i+1)));
+    strcpy(tempRightSide, expandStr+i+2);
+
+    // convert $$ to the process id
+    char *pID = malloc(sizeof(char) * 20);
+    sprintf(pID, "%d", getpid());
+
+    // concatenate all the strings together to get the expanded variable
+    char *newStr = malloc(sizeof(char) * (strlen(tempLeftSide) + strlen(tempRightSide) + strlen(pID) + 1));
+    
+    if (i > 0) {
+        strcpy(newStr, tempLeftSide);
+        strcat(newStr, pID);
+    } else {
+        strcpy(newStr, pID);
+    }
+    strcat(newStr, tempRightSide);
+
+    // free up allocated memory
+    free(tempLeftSide);
+    free(tempRightSide);
+    free(pID);
+    
+    return newStr;
+}
+
+/*
+*   Check if string contains $$
+*/
+void _checkExpansion(char *checkStr) {
+    for (int i = 0; i < strlen(checkStr); i++) {
+        if (checkStr[i] == '$') {
+            if (checkStr[i+1] == '$') {
+                checkStr = _expandVar(i, checkStr);
+                i++;
+            }
+        }
+    }
 }
 
 /*
@@ -40,6 +92,7 @@ struct userCommand *parseStr(char *inputStr) {
     // get command input by user
     char *savePtr;
     char *tempStr = strtok_r(inputStr, " ", &savePtr);
+    _checkExpansion(tempStr); // check for $$ string
 
     //store command input in struct
     userInput->command = malloc(sizeof(tempStr));
@@ -71,6 +124,7 @@ struct userCommand *parseStr(char *inputStr) {
 
             // read in next value to get redirection file
             tempStr = strtok_r(NULL, " ", &savePtr);
+            _checkExpansion(tempStr); // check for $$ string
             userInput->inFile = malloc(sizeof(tempStr));
             strcpy(userInput->inFile, tempStr);
             continue;
@@ -82,11 +136,15 @@ struct userCommand *parseStr(char *inputStr) {
 
             // read in next value to get redirection file
             tempStr = strtok_r(NULL, " ", &savePtr);
+            _checkExpansion(tempStr); // check for $$ string
             userInput->outFile = malloc(sizeof(tempStr));
             strcpy(userInput->outFile, tempStr);
             continue;
 
         } else {
+            // check if argument needs variable expansion
+            _checkExpansion(tempStr);
+
             // tempStr is an argument for the command so add it to the arg array in the
             // user command struct
             userInput->argArr[i] = malloc(sizeof(tempStr));
@@ -99,4 +157,14 @@ struct userCommand *parseStr(char *inputStr) {
     userInput->argArr[i] = NULL;
 
     return userInput;
+}
+
+/*
+*   Checks to see if there is a blank line or comment entered by user
+*/
+bool blankOrComment(char *inputStr) {
+    if (inputStr[0] == '\n' || inputStr[0] == '#') {
+        return true;
+    }
+    return false;
 }

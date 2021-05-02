@@ -17,14 +17,13 @@ int main() {
         commPrompt();
         fgets(inputStr, INLEN+1, stdin);    // get user input
 
+        // check for blank line or comment line
+        if (blankOrComment(inputStr)) {
+            continue;
+        }
+
         removeNewline(inputStr); // remove newline
         inputStruct = parseStr(inputStr);   // parse input into command and arguments
-
-        printf("%s\n", inputStruct->command);
-        printf("%s %s %s\n", inputStruct->argArr[0], inputStruct->argArr[1], inputStruct->argArr[2]);
-        printf("%d\n", *(inputStruct->outRedir));
-        printf("%d\n", *(inputStruct->inRedir));
-        printf("%d\n", *(inputStruct->runBackground));
     }
 
     exit(0);
