@@ -19,7 +19,7 @@ struct cidLinkedList {
 // and if the user wants the command I/O redirected or run in the background
 struct userCommand {
     char *command;
-    char *argArr[512];
+    char *argArr[514];
     bool *outRedir;
     char *outFile;  // where to redirect output
     bool *inRedir;

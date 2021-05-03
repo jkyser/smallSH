@@ -12,3 +12,8 @@ bool isBuiltIn(char *command);
 *   Checks which built in command the user wants to run and runs that specific command
 */
 void runCommand (struct userCommand *inputStruct, struct cidLinkedList *head, int *exitStatus);
+
+/*
+*
+*/
+void statusCommand (int *exitStatus);

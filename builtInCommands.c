@@ -45,14 +45,14 @@ void _exitCommand (struct cidLinkedList *head) {
 *   
 */
 void _cdCommand (struct userCommand *inputStruct) {
-    if (inputStruct->argArr[0] == NULL) {
+    if (inputStruct->argArr[1] == NULL) {
         // change to environment HOME var if no path specified
         chdir(getenv("HOME"));
     } else {
         // handle the input argument whether it is relative or not
         // loop through until you have relative path
         char *savePtr;
-        char *relPath = strtok_r(inputStruct->argArr[0], "/", &savePtr);
+        char *relPath = strtok_r(inputStruct->argArr[1], "/", &savePtr);
         char *nextDir = strtok_r(NULL, "/", &savePtr);
 
         while (nextDir != NULL) {
@@ -68,7 +68,7 @@ void _cdCommand (struct userCommand *inputStruct) {
 /*
 *
 */
-void _statusCommand (int *exitStatus) {
+void statusCommand (int *exitStatus) {
     if (WIFEXITED(*exitStatus)) {
         printf("exit value %d\n", WEXITSTATUS(*exitStatus));
         fflush(stdout);
@@ -76,7 +76,7 @@ void _statusCommand (int *exitStatus) {
         printf("terminated by signal %d\n", WTERMSIG(*exitStatus));
         fflush(stdout);
     } else {
-        printf("Oops something went wrong!");
+        printf("Oops something went wrong!\n");
         fflush(stdout);
     }
 }
@@ -94,7 +94,7 @@ void runCommand (struct userCommand *inputStruct, struct cidLinkedList *head, in
     } else if (test2 == 0) {
         _cdCommand(inputStruct);
     } else if (test3 == 0) {
-        _statusCommand(exitStatus);
+        statusCommand(exitStatus);
     } else {
         printf("Oops, something went wrong");
         fflush(stdout);

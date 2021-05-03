@@ -1,6 +1,7 @@
 #include "parseComm.h"
 #include "builtInCommands.h"
 #include "structs.h"
+#include "systemCommands.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -15,13 +16,13 @@ int main(void) {
     char *inputStr = malloc(sizeof(char) * INLEN+1);    // variable to hold command line input
     struct userCommand *inputStruct;
 
+    // variable to store exit status of foreground processes
+    int exitStatus = 0;
+
+    // set up head pointer for linked list of child processes
+    struct cidLinkedList *head = NULL;
+
     while (flag) {
-        // set up head pointer for linked list of child processes
-        struct cidLinkedList *head = NULL;
-
-        // variable to store exit status of foreground processes
-        int exitStatus = 0;
-
         // get user input
         commPrompt();
         fgets(inputStr, INLEN+1, stdin);
@@ -39,7 +40,7 @@ int main(void) {
         if (isBuiltIn(inputStruct->command)) {
             runCommand(inputStruct, head, &exitStatus);
         } else {
-            exit(0);
+            runSysCommand(inputStruct, &exitStatus, &head);
         }
     }
 

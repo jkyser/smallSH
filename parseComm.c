@@ -99,7 +99,11 @@ struct userCommand *parseStr(char *inputStr) {
     userInput->command = malloc(sizeof(tempStr));
     strcpy(userInput->command, tempStr);
 
-    int i = 0;
+    // store command as first argument for exec functions
+    userInput->argArr[0] = malloc(sizeof(tempStr));
+    strcpy(userInput->argArr[0], tempStr);
+
+    int i = 1;
     // loop through command input, parsing argument
     while((tempStr = strtok_r(NULL, " ", &savePtr)) != NULL) {
         if ((strcmp(tempStr, "&\0")) == 0) {
