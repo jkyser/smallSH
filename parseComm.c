@@ -157,10 +157,9 @@ struct userCommand *parseStr(char *inputStr) {
             i++;
         }
     }
-
     // null terminate argument array
     userInput->argArr[i] = NULL;
-
+    
     return userInput;
 }
 
