@@ -28,12 +28,16 @@ bool isBuiltIn(char *command) {
 */
 void _exitCommand (struct cidLinkedList *head) {
     if (head != NULL) {
-        // kill child processes
+        char *cidStr = malloc(sizeof(char) * 20);
+
+        // kill child processes by iterating through linked list
         struct cidLinkedList *prev = head;
-        struct cidLinkedList *next;
-        while (next != NULL) {
-            next = prev->next;
-            execlp("kill", "kill", "SIGKILL", prev->cid, NULL);
+        struct cidLinkedList *next = prev->next;
+        while (prev != NULL) {
+            sprintf(cidStr, "%d", *(prev->cid));
+            execlp("kill", "kill", "-SIGKILL", cidStr, NULL);
+            prev = next;
+            next = next->next;
         }
     }
 

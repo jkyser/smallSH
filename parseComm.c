@@ -78,7 +78,7 @@ void _checkExpansion(char *checkStr) {
 *   Parse the user input string into the command and its arguments. Take in to account the
 *   special characters '<', '>', '&' for I/O redirection and running in background
 */
-struct userCommand *parseStr(char *inputStr) {
+struct userCommand *parseStr(char *inputStr, bool foregroundMode) {
     // create struct to store user input
     struct userCommand *userInput = malloc(sizeof(struct userCommand));
 
@@ -109,17 +109,21 @@ struct userCommand *parseStr(char *inputStr) {
         if ((strcmp(tempStr, "&\0")) == 0) {
             // check if user wants to run process in background
             tempStr = strtok_r(NULL, " ", &savePtr);
-            if (tempStr == NULL) {
-                // if '&' character was the last argument then run process in background
-                *(userInput->runBackground) = true;
-                break;
-            } else {
-                // if '&' character was not end of arguments, then add to argArr and move on
-                // to next argument
-                userInput->argArr[i] = malloc(sizeof("&"));
-                strcpy(userInput->argArr[i], "&");
-                i++;
-            }
+                if (tempStr == NULL) {
+                    // if foreground only mode, ignore the last '&' character
+                    if (!foregroundMode) {
+                        // if '&' character was the last argument then run process in background
+                        *(userInput->runBackground) = true;
+                        break;
+                    }
+                    break;
+                } else {
+                    // if '&' character was not end of arguments, then add to argArr and move on
+                    // to next argument
+                    userInput->argArr[i] = malloc(sizeof("&"));
+                    strcpy(userInput->argArr[i], "&");
+                    i++;
+                }
         }
         
         if ((strcmp(tempStr, "<\0")) == 0) {

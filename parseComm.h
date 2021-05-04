@@ -17,7 +17,7 @@ void commPrompt();
 *   Parse the user input string into the command and its arguments. Take in to account the
 *   special characters '<', '>', '&' for I/O redirection and running in background
 */
-struct userCommand *parseStr(char *inputStr);
+struct userCommand *parseStr(char *inputStr, bool foregroundMode);
 
 /*
 *   Checks to see if there is a blank line entered by user

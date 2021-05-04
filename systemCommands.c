@@ -1,6 +1,7 @@
 #include "structs.h"
 #include "systemCommands.h"
 #include "builtInCommands.h"
+#include "signalHandling.h"
 
 #include <stdbool.h>
 #include <unistd.h>
@@ -9,6 +10,7 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <signal.h>
 
 /*
 *   Adds a child process node to the cidLinkedList to track children processes
@@ -106,6 +108,16 @@ void _checkChildIO(struct userCommand *inputStruct) {
 }
 
 /*
+*   Checks if foreground child process was terminated by SIGINT signal
+*/
+void _checkSigTermination (int exitStatus) {
+    if (WIFSIGNALED(exitStatus)) {
+        printf("terminated by signal %d\n", WTERMSIG(exitStatus));
+        fflush(stdout);
+    }
+}
+
+/*
 *   Runs a command that is not built in to smallsh. Forks a child to run the process. Function also
 *   responsible for cleaning up zombie processes. Determines if process needs to be run in the
 *   background or not.
@@ -121,6 +133,15 @@ void runSysCommand (struct userCommand *inputStruct, int *exitStatus, struct cid
         case 0:
             // check if IO needs to be redirected to /dev/null
             _checkChildIO(inputStruct);
+
+            // check if child is running in foreground; if true, signal handler
+            // needs to be reset to be specific for foreground child
+            if (!(*(inputStruct->runBackground))) {
+                struct sigaction childSIGINTstruct = childSIGINThandler();
+                sigaction(SIGINT, &childSIGINTstruct, NULL);
+            }
+            struct sigaction childSIGTSTPstruct = childSIGTSTPhandler();
+            sigaction(SIGTSTP, &childSIGTSTPstruct, NULL);
 
             // child process will run the command that is not built in to smallsh
             execvp(inputStruct->command, inputStruct->argArr);
@@ -148,6 +169,10 @@ void runSysCommand (struct userCommand *inputStruct, int *exitStatus, struct cid
 
                 // child process runs in the foreground
                 waitpid(spawnPID, exitStatus, 0);
+
+                // check if foreground process was interrupted by SIGINT
+                // if it was, print a message saying it was interrupted
+                _checkSigTermination(*exitStatus);
             }
             break;
     }
