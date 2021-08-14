@@ -1,3 +1,9 @@
+/*
+*   structs.h
+*
+*   abstract data types for the nodes in the cid linked list and the parsing of the user input
+*/
+
 #include <unistd.h>
 #include <stdbool.h>
 

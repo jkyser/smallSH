@@ -1,3 +1,7 @@
+/*
+*   builtInCommands.h
+*/
+
 #include "structs.h"
 
 #include <stdbool.h>
@@ -14,6 +18,8 @@ bool isBuiltIn(char *command);
 void runCommand (struct userCommand *inputStruct, struct cidLinkedList *head, int *exitStatus);
 
 /*
-*
+*   Built in command to show the exit status of the last foreground process; If no foreground
+*   processes have been run yet, exit status stays at 0; if process was signal terminated,
+*   status will show the signal that terminated the process
 */
 void statusCommand (int *exitStatus);

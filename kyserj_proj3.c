@@ -1,3 +1,20 @@
+/*
+*   smallsh
+*
+*   Josh Kyser
+*   CS344
+*   Project 3
+*
+*   Implementation of a small shell with the built-in commands cd, exit, and status. Can also use
+*   non-built in commands by forking child processes and using the exec() family of functions
+*   to call from the PATH environment variables. Smallsh also handles IO redirection, parsing
+*   input from the user, variable expansion on $$, and handling certain signals. CTRL-C will
+*   be ignored by parent process and children processes being run in the background, but will
+*   terminate processes running in the foreground. CTRL-Z will cause the program too enter
+*   foreground only mode, where no processes will be able to be run in the background (despite
+*   user input).
+*/
+
 #include "parseComm.h"
 #include "builtInCommands.h"
 #include "structs.h"

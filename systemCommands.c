@@ -1,3 +1,7 @@
+/*
+*   systemCommands.c
+*/
+
 #include "structs.h"
 #include "systemCommands.h"
 #include "builtInCommands.h"
@@ -95,13 +99,13 @@ void _processCompleteCheck (struct cidLinkedList **head) {
 */
 void _checkChildIO(struct userCommand *inputStruct) {
     // if no input redirection, set to /dev/null
-    if (*(inputStruct->inRedir)) {
+    if (!(*(inputStruct->inRedir))) {
         int inFD = open("/dev/null", O_RDONLY);
         dup2(inFD, 0);
     }
 
     // if no output redirection, set to /dev/null
-    if (*(inputStruct->outRedir)) {
+    if (!(*(inputStruct->outRedir))) {
         int outFD = open("/dev/null", O_WRONLY | O_CREAT | O_TRUNC, 0660);
         dup2(outFD, 1);
     }
@@ -132,7 +136,9 @@ void runSysCommand (struct userCommand *inputStruct, int *exitStatus, struct cid
             break;
         case 0:
             // check if IO needs to be redirected to /dev/null
-            _checkChildIO(inputStruct);
+            if (*(inputStruct->runBackground)) {
+                _checkChildIO(inputStruct);
+            }
 
             // check if child is running in foreground; if true, signal handler
             // needs to be reset to be specific for foreground child

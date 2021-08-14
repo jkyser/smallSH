@@ -1,3 +1,7 @@
+/*
+*   builtInCommands.c
+*/
+
 #include "builtInCommands.h"
 #include "structs.h"
 
@@ -46,7 +50,8 @@ void _exitCommand (struct cidLinkedList *head) {
 }
 
 /*
-*   
+*   Built in command to change the directory; cd with no arguments goes to the home directory;
+*   cd with arguments goes to the path specified (can be absolute or relative)
 */
 void _cdCommand (struct userCommand *inputStruct) {
     if (inputStruct->argArr[1] == NULL) {
@@ -70,7 +75,9 @@ void _cdCommand (struct userCommand *inputStruct) {
 }
 
 /*
-*
+*   Built in command to show the exit status of the last foreground process; If no foreground
+*   processes have been run yet, exit status stays at 0; if process was signal terminated,
+*   status will show the signal that terminated the process
 */
 void statusCommand (int *exitStatus) {
     if (WIFEXITED(*exitStatus)) {

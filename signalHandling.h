@@ -1,3 +1,7 @@
+/*
+*   signalHandling.h
+*/
+
 #include <signal.h>
 #include <stdbool.h>
 

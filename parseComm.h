@@ -1,3 +1,7 @@
+/*
+*   parseComm.h
+*/
+
 #include "structs.h"
 
 #include <stdbool.h>

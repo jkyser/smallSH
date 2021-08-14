@@ -1,3 +1,7 @@
+/* 
+*   signalHandling.c
+*/
+
 #include "structs.h"
 #include "signalHandling.h"
 
