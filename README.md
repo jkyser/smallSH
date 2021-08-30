@@ -56,7 +56,7 @@ The following is a list of features that were coded for SmallSH
 ![io_redirection]()
 
 
-- Running commands in either the foreground or the bakground
+- Running commands in either the foreground or the background
 
 ![foreground_process]()
 ![background_process]()
